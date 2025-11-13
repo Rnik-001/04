@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Microsoft YaHei', sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
         
         body {
@@ -158,11 +158,11 @@
         }
         
         .user-name {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             font-weight: bold;
             font-size: 17px;
             letter-spacing: 0.5px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             padding: 5px 10px;
             border-radius: 24px;
@@ -171,7 +171,7 @@
         }
         
         .drive-status {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.85);
             font-size: 12px;
             background: rgba(255, 255, 255, 0.1);
             padding: 3px 8px;
@@ -180,6 +180,7 @@
             align-self: flex-start;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
         
         /* 左侧功能操作区 */
@@ -195,7 +196,7 @@
         .function-btn {
             background: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             padding: 12px;
             margin-bottom: 10px;
             border-radius: 24px;
@@ -207,6 +208,7 @@
             -webkit-backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
         
         .function-btn:hover {
@@ -254,7 +256,7 @@
             text-align: center;
             font-weight: bold;
             margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             font-size: 18px;
             padding-bottom: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -281,9 +283,10 @@
         }
         
         .switch-label {
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             font-size: 15px;
             flex: 1;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
         
         /* 开关样式 - 液态玻璃风格 */
@@ -415,6 +418,30 @@
             background: rgba(255, 255, 255, 0.5);
         }
         
+        /* 添加的面板内容 */
+        .panel-content {
+            display: none;
+        }
+        
+        .panel-content.active {
+            display: block;
+        }
+        
+        /* 状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .status-indicator.active {
+            background: rgba(0, 255, 0, 0.7);
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+        }
+        
         /* 响应式调整 */
         @media (max-width: 650px) {
             .assistant-container {
@@ -456,30 +483,6 @@
                 border-top: 1px solid rgba(255, 255, 255, 0.2);
                 padding-top: 20px;
             }
-        }
-        
-        /* 添加的面板内容 */
-        .panel-content {
-            display: none;
-        }
-        
-        .panel-content.active {
-            display: block;
-        }
-        
-        /* 状态指示器 */
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
-            background: rgba(255, 255, 255, 0.5);
-        }
-        
-        .status-indicator.active {
-            background: rgba(0, 255, 0, 0.7);
-            box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
         }
     </style>
 </head>
@@ -636,10 +639,10 @@
                 <div class="switch-title">关于我们</div>
                 
                 <div class="switch-row" style="flex-direction: column; align-items: flex-start;">
-                    <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 10px; line-height: 1.5;">
+                    <p style="color: rgba(255, 255, 255, 0.95); margin-bottom: 10px; line-height: 1.5; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
                         这是一个液态玻璃UI设计示例，展示了现代UI设计中的玻璃拟态效果。
                     </p>
-                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px; line-height: 1.5;">
+                    <p style="color: rgba(255, 255, 255, 0.85); font-size: 14px; line-height: 1.5; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
                         版本: 1.0.0<br>
                         开发者: UI设计团队<br>
                         更新日期: 2023年10月
