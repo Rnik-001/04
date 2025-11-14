@@ -20,7 +20,42 @@
             overflow: hidden;
             position: relative;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: background 0.5s ease;
+            transition: all 0.5s ease;
+        }
+        
+        /* 深色主题样式 */
+        body.dark-theme {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        }
+        
+        body.dark-theme .assistant-container {
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.37),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        body.dark-theme .assistant-container:hover {
+            box-shadow: 
+                0 8px 40px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        body.dark-theme .user-name,
+        body.dark-theme .drive-status,
+        body.dark-theme .function-btn,
+        body.dark-theme .switch-title,
+        body.dark-theme .switch-label {
+            background: rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        
+        body.dark-theme .switch-row {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-theme .champion-img {
+            background: rgba(0, 0, 0, 0.3);
         }
         
         /* 主题切换按钮 */
@@ -50,10 +85,6 @@
         .theme-switch::after {
             content: '☀️';
             font-size: 20px;
-        }
-        
-        body.dark-theme {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
         }
         
         body.dark-theme .theme-switch::after {
@@ -158,11 +189,11 @@
         }
         
         .user-name {
-            color: rgba(255, 255, 255, 0.95);
+            color: #ffffff;
             font-weight: bold;
             font-size: 17px;
             letter-spacing: 0.5px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             padding: 5px 10px;
             border-radius: 24px;
@@ -171,7 +202,7 @@
         }
         
         .drive-status {
-            color: rgba(255, 255, 255, 0.85);
+            color: #ffffff;
             font-size: 12px;
             background: rgba(255, 255, 255, 0.1);
             padding: 3px 8px;
@@ -180,7 +211,7 @@
             align-self: flex-start;
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
         
         /* 左侧功能操作区 */
@@ -194,9 +225,9 @@
         }
         
         .function-btn {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: rgba(255, 255, 255, 0.95);
+            color: #ffffff;
             padding: 12px;
             margin-bottom: 10px;
             border-radius: 24px;
@@ -208,11 +239,11 @@
             -webkit-backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
         
         .function-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
@@ -252,11 +283,11 @@
         }
         
         .switch-title {
-            color: rgba(255, 255, 255, 0.95);
+            color: #ffffff;
             text-align: center;
             font-weight: bold;
             margin-bottom: 20px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
             font-size: 18px;
             padding-bottom: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -283,10 +314,10 @@
         }
         
         .switch-label {
-            color: rgba(255, 255, 255, 0.95);
+            color: #ffffff;
             font-size: 15px;
             flex: 1;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
         
         /* 开关样式 - 液态玻璃风格 */
@@ -348,7 +379,7 @@
             left: 30px;
             width: 70px;
             height: 70px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             display: flex;
@@ -567,7 +598,7 @@
                 <div class="switch-row">
                     <span class="switch-label">深色模式</span>
                     <label class="switch">
-                        <input type="checkbox">
+                        <input type="checkbox" id="darkModeToggle">
                         <span class="slider"></span>
                     </label>
                 </div>
@@ -639,10 +670,10 @@
                 <div class="switch-title">关于我们</div>
                 
                 <div class="switch-row" style="flex-direction: column; align-items: flex-start;">
-                    <p style="color: rgba(255, 255, 255, 0.95); margin-bottom: 10px; line-height: 1.5; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                    <p style="color: #ffffff; margin-bottom: 10px; line-height: 1.5; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);">
                         这是一个液态玻璃UI设计示例，展示了现代UI设计中的玻璃拟态效果。
                     </p>
-                    <p style="color: rgba(255, 255, 255, 0.85); font-size: 14px; line-height: 1.5; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                    <p style="color: #ffffff; font-size: 14px; line-height: 1.5; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);">
                         版本: 1.0.0<br>
                         开发者: UI设计团队<br>
                         更新日期: 2023年10月
@@ -721,9 +752,41 @@
             
             // 主题切换功能
             const themeSwitch = document.getElementById('themeSwitch');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            
+            // 检查本地存储中的主题设置
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-theme');
+                if (darkModeToggle) darkModeToggle.checked = true;
+            }
+            
+            // 主题切换按钮事件
             themeSwitch.addEventListener('click', function() {
                 document.body.classList.toggle('dark-theme');
+                
+                // 更新本地存储
+                if (document.body.classList.contains('dark-theme')) {
+                    localStorage.setItem('theme', 'dark');
+                    if (darkModeToggle) darkModeToggle.checked = true;
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    if (darkModeToggle) darkModeToggle.checked = false;
+                }
             });
+            
+            // 深色模式开关事件
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('change', function() {
+                    if (this.checked) {
+                        document.body.classList.add('dark-theme');
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        document.body.classList.remove('dark-theme');
+                        localStorage.setItem('theme', 'light');
+                    }
+                });
+            }
         });
     </script>
 </body>
