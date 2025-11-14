@@ -151,6 +151,10 @@
             background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
         }
         
+        .btn-warning {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+        }
+        
         .buttons {
             display: flex;
             gap: 12px;
@@ -262,6 +266,11 @@
             font-size: 18px;
         }
         
+        .base64-result {
+            margin-top: 15px;
+            display: none;
+        }
+        
         @media (max-width: 600px) {
             .buttons {
                 flex-direction: column;
@@ -288,7 +297,7 @@
 <body>
     <div class="container">
         <header>
-            <h1> 密码替换 </h1>
+            <h1>订阅❷替换</h1>
             <p class="subtitle">订阅密码替换工具 - 安全处理您的订阅链接并生成配置文件</p>
         </header>
         
@@ -316,7 +325,7 @@
                 
                 <div class="form-group">
                     <label for="outputFilename">输出文件名</label>
-                    <input type="text" id="outputFilename" value="🌍订阅.txt" placeholder="请输入文件名">
+                    <input type="text" id="outputFilename" value="订阅❷.txt" placeholder="请输入文件名">
                 </div>
                 
                 <button class="btn btn-block" id="processBtn">
@@ -351,15 +360,19 @@
                             <div class="icon">📋</div>
                             <span>复制链接</span>
                         </button>
+                        <button class="btn btn-warning" id="base64Btn">
+                            <div class="icon">🔗</div>
+                            <span>转换为Base64</span>
+                        </button>
                     </div>
                     
-                    <div class="share-section">
-                        <div class="share-title">分享配置文件</div>
-                        <p style="margin-bottom: 15px; color: #666; font-size: 14px;">您可以将保存的配置文件分享给其他工具</p>
-                        <div class="share-buttons">
-                            <button class="btn btn-secondary" id="shareBtn">
-                                <div class="icon">🔗</div>
-                                <span>生成分享链接</span>
+                    <div class="base64-result" id="base64Result">
+                        <div class="share-title">Base64 订阅内容</div>
+                        <textarea id="base64Text" readonly placeholder="Base64编码将显示在这里..."></textarea>
+                        <div class="buttons">
+                            <button class="btn btn-secondary" id="copyBase64Btn">
+                                <div class="icon">📋</div>
+                                <span>复制Base64</span>
                             </button>
                         </div>
                     </div>
@@ -368,7 +381,7 @@
         </div>
         
         <footer>
-            <p>本工具仅用于学习和研究目的 | 数据来源于iOSAWJ</p>
+            <p>本工具仅用于学习和研究目的 | 数据来源于𝐓𝐆频道@𝐢𝐎𝐒𝐀𝐖𝐉 </p>
         </footer>
     </div>
 
@@ -379,10 +392,13 @@
             const processBtn = document.getElementById('processBtn');
             const downloadBtn = document.getElementById('downloadBtn');
             const copyBtn = document.getElementById('copyBtn');
-            const shareBtn = document.getElementById('shareBtn');
+            const base64Btn = document.getElementById('base64Btn');
+            const copyBase64Btn = document.getElementById('copyBase64Btn');
             const resultArea = document.getElementById('resultArea');
             const resultText = document.getElementById('resultText');
             const resultCount = document.getElementById('resultCount');
+            const base64Result = document.getElementById('base64Result');
+            const base64Text = document.getElementById('base64Text');
             const loading = document.getElementById('loading');
             const successAlert = document.getElementById('successAlert');
             const errorAlert = document.getElementById('errorAlert');
@@ -457,6 +473,7 @@
                 
                 loading.style.display = 'block';
                 resultArea.style.display = 'none';
+                base64Result.style.display = 'none';
                 
                 try {
                     const originalLinks = await fetchAndDecodeBase64(FIXED_SUBSCRIPTION_URL);
@@ -481,7 +498,7 @@
             // 下载文件
             downloadBtn.addEventListener('click', function() {
                 const content = resultText.value;
-                const filename = outputFilenameInput.value || '闪连保活.txt';
+                const filename = outputFilenameInput.value || '订阅❷.txt';
                 
                 if (!content) {
                     showAlert(errorAlert, '没有内容可下载');
@@ -519,33 +536,39 @@
                     });
             });
             
-            // 生成分享链接
-            shareBtn.addEventListener('click', function() {
+            // 转换为Base64
+            base64Btn.addEventListener('click', function() {
                 const content = resultText.value;
                 
                 if (!content) {
-                    showAlert(errorAlert, '没有内容可分享');
+                    showAlert(errorAlert, '没有内容可转换');
                     return;
                 }
                 
-                // 创建临时下载链接
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-                const url = URL.createObjectURL(blob);
+                // 将内容转换为Base64
+                const base64Content = btoa(content);
+                base64Text.value = base64Content;
+                base64Result.style.display = 'block';
                 
-                // 创建临时下载按钮
-                const tempDownloadBtn = document.createElement('a');
-                tempDownloadBtn.href = url;
-                tempDownloadBtn.download = outputFilenameInput.value || '🌍订阅.txt';
-                tempDownloadBtn.textContent = '点击下载配置文件';
-                tempDownloadBtn.className = 'btn btn-success';
-                tempDownloadBtn.style.marginTop = '10px';
-                tempDownloadBtn.style.display = 'block';
+                showAlert(successAlert, '内容已转换为Base64格式');
+            });
+            
+            // 复制Base64到剪贴板
+            copyBase64Btn.addEventListener('click', function() {
+                const content = base64Text.value;
                 
-                // 替换分享按钮
-                shareBtn.style.display = 'none';
-                shareBtn.parentNode.appendChild(tempDownloadBtn);
+                if (!content) {
+                    showAlert(errorAlert, '没有Base64内容可复制');
+                    return;
+                }
                 
-                showAlert(successAlert, '已生成配置文件下载链接，您可以将其分享给其他工具');
+                navigator.clipboard.writeText(content)
+                    .then(() => {
+                        showAlert(successAlert, 'Base64内容已复制到剪贴板');
+                    })
+                    .catch(err => {
+                        showAlert(errorAlert, '复制失败: ' + err);
+                    });
             });
         });
     </script>
