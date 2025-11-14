@@ -362,8 +362,9 @@
         }
         
         input:checked + .slider {
-            background: rgba(255, 255, 255, 0.4);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(76, 175, 80, 0.6); /* 绿色背景 */
+            border-color: rgba(76, 175, 80, 0.8);
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.4);
         }
         
         input:checked + .slider:before {
@@ -713,15 +714,23 @@
             switches.forEach(sw => {
                 sw.addEventListener('change', function() {
                     const parent = this.closest('.switch-row');
+                    const slider = this.nextElementSibling;
+                    
                     if (this.checked) {
-                        parent.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.3)';
+                        // 开启状态 - 添加绿色反馈
+                        parent.style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.4)';
                         parent.style.transform = 'translateX(5px) scale(1.02)';
+                        slider.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.6)';
+                        
                         setTimeout(() => {
-                            parent.style.boxShadow = 'none';
+                            parent.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
                             parent.style.transform = 'translateX(5px)';
+                            slider.style.boxShadow = '0 0 10px rgba(76, 175, 80, 0.4)';
                         }, 600);
                     } else {
+                        // 关闭状态
                         parent.style.transform = 'translateX(0)';
+                        slider.style.boxShadow = 'none';
                     }
                 });
             });
