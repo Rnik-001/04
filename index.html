@@ -288,7 +288,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>订阅替换</h1>
+            <h1> 密码替换 </h1>
             <p class="subtitle">订阅密码替换工具 - 安全处理您的订阅链接并生成配置文件</p>
         </header>
         
@@ -354,16 +354,12 @@
                     </div>
                     
                     <div class="share-section">
-                        <div class="share-title">分享到其他工具</div>
+                        <div class="share-title">分享配置文件</div>
+                        <p style="margin-bottom: 15px; color: #666; font-size: 14px;">您可以将保存的配置文件分享给其他工具</p>
                         <div class="share-buttons">
- 
-                            <button class="btn btn-secondary" id="shareShadowrocket">
-                                <div class="icon">🚀</div>
-                                <span>Shadowrocket</span>
-                            </button>
-                            <button class="btn btn-secondary" id="shareV2ray">
-                                <div class="icon">🔰</div>
-                                <span>V2rayNG</span>
+                            <button class="btn btn-secondary" id="shareBtn">
+                                <div class="icon">🔗</div>
+                                <span>生成分享链接</span>
                             </button>
                         </div>
                     </div>
@@ -372,7 +368,7 @@
         </div>
         
         <footer>
-            <p>本工具仅用于学习和研究目的 | 数据来源于固定订阅链接</p>
+            <p>本工具仅用于学习和研究目的 | 数据来源于iOSAWJ</p>
         </footer>
     </div>
 
@@ -383,6 +379,7 @@
             const processBtn = document.getElementById('processBtn');
             const downloadBtn = document.getElementById('downloadBtn');
             const copyBtn = document.getElementById('copyBtn');
+            const shareBtn = document.getElementById('shareBtn');
             const resultArea = document.getElementById('resultArea');
             const resultText = document.getElementById('resultText');
             const resultCount = document.getElementById('resultCount');
@@ -391,9 +388,6 @@
             const errorAlert = document.getElementById('errorAlert');
             const successMessage = document.getElementById('successMessage');
             const errorMessage = document.getElementById('errorMessage');
-            const shareClash = document.getElementById('shareClash');
-            const shareShadowrocket = document.getElementById('shareShadowrocket');
-            const shareV2ray = document.getElementById('shareV2ray');
             
             // 固定的订阅地址
             const FIXED_SUBSCRIPTION_URL = "https://raw.githubusercontent.com/iosDG001/_/refs/heads/main/SLVPN";
@@ -525,8 +519,8 @@
                     });
             });
             
-            // 分享到Clash
-            shareClash.addEventListener('click', function() {
+            // 生成分享链接
+            shareBtn.addEventListener('click', function() {
                 const content = resultText.value;
                 
                 if (!content) {
@@ -534,59 +528,24 @@
                     return;
                 }
                 
-                // 将内容转换为Base64
-                const base64Content = btoa(content);
-                const clashUrl = `clash://install-config?url=data:text/plain;base64,${base64Content}`;
+                // 创建临时下载链接
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
                 
-                // 创建临时链接进行跳转
-                const a = document.createElement('a');
-                a.href = clashUrl;
-                a.click();
+                // 创建临时下载按钮
+                const tempDownloadBtn = document.createElement('a');
+                tempDownloadBtn.href = url;
+                tempDownloadBtn.download = outputFilenameInput.value || '🌍订阅.txt';
+                tempDownloadBtn.textContent = '点击下载配置文件';
+                tempDownloadBtn.className = 'btn btn-success';
+                tempDownloadBtn.style.marginTop = '10px';
+                tempDownloadBtn.style.display = 'block';
                 
-                showAlert(successAlert, '已生成Clash分享链接');
-            });
-            
-            // 分享到Shadowrocket
-            shareShadowrocket.addEventListener('click', function() {
-                const content = resultText.value;
+                // 替换分享按钮
+                shareBtn.style.display = 'none';
+                shareBtn.parentNode.appendChild(tempDownloadBtn);
                 
-                if (!content) {
-                    showAlert(errorAlert, '没有内容可分享');
-                    return;
-                }
-                
-                // 将内容转换为Base64
-                const base64Content = btoa(content);
-                const shadowrocketUrl = `shadowrocket://add/sub://${base64Content}`;
-                
-                // 创建临时链接进行跳转
-                const a = document.createElement('a');
-                a.href = shadowrocketUrl;
-                a.click();
-                
-                showAlert(successAlert, '已生成Shadowrocket分享链接');
-            });
-            
-            // 分享到V2rayNG
-            shareV2ray.addEventListener('click', function() {
-                const content = resultText.value;
-                
-                if (!content) {
-                    showAlert(errorAlert, '没有内容可分享');
-                    return;
-                }
-                
-                // 将内容转换为Base64
-                const base64Content = btoa(content);
-                
-                // 复制到剪贴板供V2rayNG导入
-                navigator.clipboard.writeText(base64Content)
-                    .then(() => {
-                        showAlert(successAlert, 'Base64内容已复制，请在V2rayNG中导入');
-                    })
-                    .catch(err => {
-                        showAlert(errorAlert, '复制失败: ' + err);
-                    });
+                showAlert(successAlert, '已生成配置文件下载链接，您可以将其分享给其他工具');
             });
         });
     </script>
