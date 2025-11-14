@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>订阅密码替换工具</title>
+    <title> 订阅❷密码替换工具</title>
     <style>
         * {
             margin: 0;
@@ -297,8 +297,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>订阅❷替换</h1>
-            <p class="subtitle">订阅密码替换工具 - 安全处理您的订阅链接并生成配置文件</p>
+            <h1> 订阅❷ 替换工具</h1>
+            <p class="subtitle">订阅密码替换工具</p>
         </header>
         
         <div class="content">
@@ -381,7 +381,7 @@
         </div>
         
         <footer>
-            <p>本工具仅用于学习和研究目的 | 数据来源于𝐓𝐆频道@𝐢𝐎𝐒𝐀𝐖𝐉 </p>
+            <p>🌹本工具仅用于学习和研究目的 | 数据来源于𝐓𝐆频道@𝐢𝐎𝐒𝐀𝐖𝐉 </p>
         </footer>
     </div>
 
@@ -437,20 +437,31 @@
                 }
             }
             
-            // 替换trojan密码
+            // 替换trojan密码 - 修复版本，保留备注信息
             function replaceTrojanPassword(links, newPassword) {
                 const updated = [];
                 for (const line of links) {
                     if (line.startsWith("trojan://")) {
                         try {
-                            const content = line.substring(9);
-                            if (!content.includes('@')) {
-                                updated.push(line);
-                                continue;
+                            // 使用正则表达式提取密码、服务器和备注部分
+                            const match = line.match(/^trojan:\/\/([^@]+)@([^?#]+)(\?[^#]*)?(#.*)?$/);
+                            
+                            if (match) {
+                                const [, oldPassword, server, params = '', fragment = ''] = match;
+                                // 构建新的trojan链接，保留原始参数和备注
+                                const newLine = `trojan://${newPassword}@${server}${params}${fragment}`;
+                                updated.push(newLine);
+                            } else {
+                                // 如果正则匹配失败，使用原始方法
+                                const content = line.substring(9);
+                                if (!content.includes('@')) {
+                                    updated.push(line);
+                                    continue;
+                                }
+                                const [_, rest] = content.split('@', 2);
+                                const newLine = `trojan://${newPassword}@${rest}`;
+                                updated.push(newLine);
                             }
-                            const [_, rest] = content.split('@', 2);
-                            const newLine = `trojan://${newPassword}@${rest}`;
-                            updated.push(newLine);
                         } catch (error) {
                             console.error(`替换失败: ${error}`);
                             updated.push(line);
@@ -546,7 +557,7 @@
                 }
                 
                 // 将内容转换为Base64
-                const base64Content = btoa(content);
+                const base64Content = btoa(unescape(encodeURIComponent(content)));
                 base64Text.value = base64Content;
                 base64Result.style.display = 'block';
                 
