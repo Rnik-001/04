@@ -338,7 +338,7 @@
         function getMemoryBase() {
             try {
                 // 直接获取 UnityFramework 模块的内存范围
-                const ranges = h5gg.getRangesList('UnityFramework');
+                const ranges = h5gg.getRangesList('wildrift');
                 if (ranges && ranges.length > 0) {
                     return ranges[0].start;
                 }
