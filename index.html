@@ -412,8 +412,8 @@
                     stop2xLoop();
                     is2xActive = false;
                     btn1.classList.remove('active-special');
-                    btn1.innerHTML = '🌟 ① 2.0倍视距（循环写入）';
-                    updateGameStatus("2倍循环已停止");
+                    btn1.innerHTML = '🌟 ① 2.0倍视距';
+                    updateGameStatus("2倍已停止");
                 }
                 const finalAddr = getFinalAddress();
                 h5gg.setValue(finalAddr, val, 'F32');
@@ -435,17 +435,17 @@
                 if (start2xLoop()) {
                     is2xActive = true;
                     btn1.classList.add('active-special');
-                    btn1.innerHTML = '✅ ① 2.0倍 · 循环生效中';
+                    btn1.innerHTML = '✅ ① 2.0倍 · 生效中';
                     // 如果自定义按钮有激活样式，取消它
                     if (btn2.classList.contains('active-special')) {
                         btn2.classList.remove('active-special');
                         btn2.innerHTML = '🎛️ ② 自定义视距 (0.1~9.9)';
                     }
-                    updateGameStatus("2.0倍视距循环写入已启动");
-                }
+                    updateGameStatus("2.0倍视距写入已启动");
+            
             } else {
                 // 关闭2倍
-                if (confirm("关闭2.0倍循环写入？恢复默认请重进游戏或手动调整")) {
+                if (confirm("恢复默认请重进游戏或手动调整")) {
                     stop2xLoop();
                     is2xActive = false;
                     btn1.classList.remove('active-special');
