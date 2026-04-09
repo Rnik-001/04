@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>王者视距 · 极简小屏版</title>
+    <title>英雄联盟 · 极简小屏版</title>
     <style>
-        /* 完整保留原版样式 */
         * {
             margin: 0;
             padding: 0;
@@ -91,7 +90,6 @@
         }
         .action-btn:active {
             transform: scale(0.97);
-            background: #fafcfa;
         }
         .btn-primary {
             background: #23b574;
@@ -103,10 +101,18 @@
             color: #ffecb3;
             border: 1px solid #3e5a6b;
         }
-        .active-special {
-            background: #e2f3e9;
-            border: 1.5px solid #23b574;
-            color: #136b45;
+        /* 激活状态 - 成功后的高亮样式 */
+        .active-success {
+            background: #23b574 !important;
+            color: white !important;
+            border: 1px solid #1a8c5a !important;
+            box-shadow: 0 2px 6px rgba(35, 181, 116, 0.3);
+        }
+        /* 自定义按钮激活样式（也使用绿色，但保留区分） */
+        .custom-active {
+            background: #23b574 !important;
+            color: white !important;
+            border: 1px solid #1a8c5a !important;
         }
         .divider {
             height: 1px;
@@ -128,20 +134,6 @@
             color: #1f8a5c;
             text-decoration: none;
             font-weight: 500;
-        }
-        .status-tip {
-            font-size: 10px;
-            background: #f8faf8;
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 30px;
-            margin-top: 12px;
-            color: #2c6e4a;
-            text-align: center;
-        }
-        .flex-center {
-            display: flex;
-            justify-content: center;
         }
         .modal-overlay {
             position: fixed;
@@ -201,13 +193,10 @@
             font-weight: 500;
             outline: none;
             color: #1a2e24;
-            box-shadow: none;
-            -webkit-appearance: none;
         }
         .input-group input:focus {
             border-color: #23b574;
             box-shadow: 0 0 0 2px rgba(35, 181, 116, 0.1);
-            background: #ffffff !important;
         }
         .modal-btn {
             background: #23b574;
@@ -270,7 +259,7 @@
         </div>
 
         <button id="button1" class="action-btn btn-primary">
-            🌟 ① 2.0倍视距（循环写入）
+            🌟 ① 2.0倍视距
         </button>
         <button id="button2" class="action-btn">
             🎛️ ② 自定义视距 (0.1~9.9)
@@ -285,10 +274,7 @@
         <div class="footer-note">
             <span>© 2026 爱玩机</span>
             <span>🌹 学习研究</span>
-            <a href="#" id="fakeChannelLink">📢 免费加入</a>
-        </div>
-        <div class="flex-center">
-            <span class="status-tip" id="gameStatusText">⚙️ 工具就绪</span>
+            <a href="#" id="fakeChannelLink">📢 欢迎加入</a>
         </div>
     </div>
 </div>
@@ -305,35 +291,26 @@
             }
         }
 
-        // ---------- 2. 全局变量 ----------
-        let memoryBase = null;          // UnityFramework 基址
-        let intervalId = null;          // 2倍循环写入的定时器ID
-        let is2xActive = false;         // 记录2倍是否激活（用于UI样式）
+        // ---------- 全局变量 ----------
+        let memoryBase = null;
+        let intervalId = null;          // 2倍循环定时器
+        let is2xActive = false;         // 2倍是否激活
 
-        // DOM 元素
         const mainTool = document.getElementById('mainTool');
         const modalOverlay = document.getElementById('entryModal');
         const confirmInput = document.getElementById('confirmInput');
         const confirmBtn = document.getElementById('confirmBtn');
         const modalError = document.getElementById('modalError');
-        const gameStatusSpan = document.getElementById('gameStatusText');
         const btn1 = document.getElementById('button1');
         const btn2 = document.getElementById('button2');
 
-        // 频道链接（保持不变）
+        // 频道链接
         const channelUrl = "https://t.me/iOSAWJ";
         document.getElementById('tgChannelBtn').addEventListener('click', () => window.open(channelUrl, '_blank'));
         document.getElementById('fakeChannelLink').addEventListener('click', (e) => {
             e.preventDefault();
             window.open(channelUrl, '_blank');
         });
-
-        function updateGameStatus(msg, isErr = false) {
-            if (gameStatusSpan) {
-                gameStatusSpan.textContent = msg;
-                gameStatusSpan.style.color = isErr ? "#e67e22" : "#2a7a50";
-            }
-        }
 
         // 获取 UnityFramework 基址
         function getMemoryBase() {
@@ -349,7 +326,7 @@
             }
         }
 
-        // ---------- 核心：计算最终视距地址（使用用户提供的极简链）----------
+        // ---------- 核心：计算最终视距地址（用户提供的极简链）----------
         // 链: UnityFramework + 0xDFB51C8 -> [+0x17A8] -> [+0x1098] -> [+0x1898] -> [+0x194]
         function getFinalAddress() {
             if (!memoryBase) {
@@ -365,7 +342,7 @@
             return jz2;
         }
 
-        // 停止2倍循环（如果有）
+        // 停止2倍循环
         function stop2xLoop() {
             if (intervalId !== null) {
                 clearInterval(intervalId);
@@ -373,25 +350,20 @@
             }
         }
 
-        // 2倍视距：开启循环写入（setInterval 0延迟）
+        // 启动2倍循环写入（setInterval 0）
         function start2xLoop() {
             if (!memoryBase) {
                 alert("游戏基址未就绪，请重新进入");
                 return false;
             }
             try {
-                // 先计算一次地址，确保偏移链有效
                 const finalAddr = getFinalAddress();
                 if (!finalAddr || finalAddr === 0) throw new Error("计算地址失败");
-                // 停止之前的循环
                 stop2xLoop();
-                // 启动新循环：每帧（约最快速度）写入 2.0
                 intervalId = setInterval(() => {
                     try {
                         h5gg.setValue(finalAddr, 2.0, 'F32');
-                    } catch(e) {
-                        // 静默失败，避免频繁弹窗
-                    }
+                    } catch(e) {}
                 }, 0);
                 return true;
             } catch(e) {
@@ -400,20 +372,19 @@
             }
         }
 
-        // 自定义视距：一次性写入（先停止2倍循环）
+        // 自定义一次性写入（先停止2倍）
         function setCustomDistance(val) {
             if (!memoryBase) {
                 alert("游戏基址未就绪，请重新进入");
                 return false;
             }
             try {
-                // 停止2倍循环（防止冲突）
                 if (is2xActive) {
                     stop2xLoop();
                     is2xActive = false;
-                    btn1.classList.remove('active-special');
+                    // 恢复2倍按钮样式
+                    btn1.classList.remove('active-success');
                     btn1.innerHTML = '🌟 ① 2.0倍视距';
-                    updateGameStatus("2倍已停止");
                 }
                 const finalAddr = getFinalAddress();
                 h5gg.setValue(finalAddr, val, 'F32');
@@ -424,33 +395,32 @@
             }
         }
 
-        // ---------- 按钮交互 ----------
+        // ---------- 按钮交互（提示直接在按钮上，颜色区分）----------
         function toggle2x() {
             if (!memoryBase) {
                 alert("游戏基址未就绪，请重新进入");
                 return;
             }
             if (!is2xActive) {
-                // 开启2倍
+                // 尝试开启2倍
                 if (start2xLoop()) {
                     is2xActive = true;
-                    btn1.classList.add('active-special');
-                    btn1.innerHTML = '✅ ① 2.0倍 · 生效中';
-                    // 如果自定义按钮有激活样式，取消它
-                    if (btn2.classList.contains('active-special')) {
-                        btn2.classList.remove('active-special');
-                        btn2.innerHTML = '🎛️ ② 自定义视距 (0.1~9.9)';
+                    // 2倍按钮变为成功样式
+                    btn1.classList.add('active-success');
+                    btn1.innerHTML = '✅ ① 2.0倍 · 已激活';
+                    // 如果自定义按钮是激活状态，恢复它
+                    if (btn2.classList.contains('custom-active')) {
+                        btn2.classList.remove('custom-active');
+                        btn2.innerHTML = '💬② 自定义视距 (0.1~9.9)';
                     }
-                    updateGameStatus("2.0倍视距写入已启动");
-            
+                }
             } else {
                 // 关闭2倍
-                if (confirm("恢复默认请重进游戏或手动调整")) {
+                if (confirm("恢复默认请重进游戏")) {
                     stop2xLoop();
                     is2xActive = false;
-                    btn1.classList.remove('active-special');
-                    btn1.innerHTML = '🌟 ① 2.0倍视距（循环写入）';
-                    updateGameStatus("2.0倍循环已停止");
+                    btn1.classList.remove('active-success');
+                    btn1.innerHTML = '🌟 ① 2.0倍视距';
                 }
             }
         }
@@ -468,54 +438,84 @@
                 return;
             }
             if (setCustomDistance(val)) {
-                // 激活自定义按钮样式，取消2倍激活样式（已停止）
-                btn2.classList.add('active-special');
+                // 自定义成功：按钮高亮并显示倍数
+                btn2.classList.add('custom-active');
                 btn2.innerHTML = `🎯 ② 自定义[${val}x] · 已生效`;
-                updateGameStatus(`自定义视距 ${val}x 已写入（一次性）`);
+                // 如果2倍是激活状态，已经在上面的setCustomDistance里被停用了，但还需要确保2倍按钮样式恢复
+                if (is2xActive) {
+                    // 理论上setCustomDistance已经处理了is2xActive和btn1样式，但再保险一下
+                    is2xActive = false;
+                    btn1.classList.remove('active-success');
+                    btn1.innerHTML = '🌟 ① 2.0倍视距';
+                }
             }
         }
 
-        // 绑定事件（避免重复）
+        // 绑定事件（避免重复绑定）
         function bindEvents() {
-            // 使用克隆方式移除旧监听
             const newBtn1 = btn1.cloneNode(true);
             const newBtn2 = btn2.cloneNode(true);
             btn1.parentNode.replaceChild(newBtn1, btn1);
             btn2.parentNode.replaceChild(newBtn2, btn2);
             document.getElementById('button1').addEventListener('click', toggle2x);
             document.getElementById('button2').addEventListener('click', customDistance);
+            // 更新全局按钮引用
+            window.btn1 = document.getElementById('button1');
+            window.btn2 = document.getElementById('button2');
+            // 重新赋值给外部变量（因为克隆后原变量指向旧元素）
+            Object.assign(btn1, { parentNode: window.btn1.parentNode }); // 简单重新获取
+            // 直接重新获取
+            window.location.reload ? null : null;
         }
 
-        // ---------- 验证弹窗与初始化 ----------
+        // 由于克隆导致原btn1/btn2失效，我们重新获取
+        function refreshButtons() {
+            return {
+                btn1: document.getElementById('button1'),
+                btn2: document.getElementById('button2')
+            };
+        }
+
+        // 验证并进入
         function verifyAndEnter() {
             const userInput = confirmInput.value.trim();
             if (userInput === "OK") {
                 modalOverlay.style.opacity = "0";
                 setTimeout(() => {
                     modalOverlay.style.display = "none";
-                    updateGameStatus("正在获取内存基址...");
+                    // 尝试获取基址
                     try {
                         memoryBase = getMemoryBase();
                         if (memoryBase) {
-                            // 预先测试一下偏移链是否有效（计算一次地址）
+                            // 测试偏移链是否有效
                             try {
-                                const testAddr = getFinalAddress();
-                                if (testAddr && testAddr !== 0) {
-                                    updateGameStatus("✅ 基址就绪 · 偏移链有效");
-                                } else {
-                                    updateGameStatus("⚠️ 基址就绪但偏移链无效", true);
-                                }
+                                getFinalAddress();
+                                // 无需底部状态栏，成功不弹窗
                             } catch(e) {
-                                updateGameStatus("⚠️ 偏移链无效: " + e.message, true);
+                                alert("偏移链无效，请检查游戏版本：" + e.message);
                             }
                         } else {
-                            updateGameStatus("⚠️ 无法获取基址，请检查游戏进程", true);
+                            alert("无法获取UnityFramework基址，请确保在游戏内运行");
                         }
                     } catch(e) {
-                        updateGameStatus("❌ 基址获取失败: " + e.message, true);
+                        alert("初始化失败：" + e.message);
                     }
                     mainTool.classList.add("visible");
-                    bindEvents();
+                    // 绑定事件（重新获取最新按钮）
+                    const btns = refreshButtons();
+                    const newBtn1 = btns.btn1.cloneNode(true);
+                    const newBtn2 = btns.btn2.cloneNode(true);
+                    btns.btn1.parentNode.replaceChild(newBtn1, btns.btn1);
+                    btns.btn2.parentNode.replaceChild(newBtn2, btns.btn2);
+                    document.getElementById('button1').addEventListener('click', toggle2x);
+                    document.getElementById('button2').addEventListener('click', customDistance);
+                    // 更新全局变量指向新按钮
+                    window.btn1 = document.getElementById('button1');
+                    window.btn2 = document.getElementById('button2');
+                    // 将外部变量重新绑定（因为toggle2x/customDistance内部使用了btn1, btn2，需要更新）
+                    // 简单重新赋值
+                    Object.assign(btn1, { ...window.btn1 });
+                    Object.assign(btn2, { ...window.btn2 });
                 }, 200);
             } else {
                 modalError.innerText = "⚠️ 请输入「OK」确认条款";
@@ -530,7 +530,6 @@
         confirmBtn.addEventListener('click', verifyAndEnter);
         confirmInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') verifyAndEnter(); });
 
-        // 初始状态
         mainTool.classList.remove('visible');
         modalOverlay.style.display = 'flex';
     })();
