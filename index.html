@@ -307,7 +307,7 @@
         }
 
         // ---------- 2. 全局变量 ----------
-        let memoryBase = null;          // wildrift 基址
+        let memoryBase = null;          // UnityFramework 基址
         let isActive1 = false;
         let isActive2 = false;
 
@@ -334,11 +334,11 @@
             }
         }
 
-        // ---------- 3. 获取基址（只获取 wildrift 模块，不改逻辑） ----------
+        // ---------- 3. 获取基址（不重新绑定进程，只读内存信息） ----------
         function getMemoryBase() {
             try {
-                // 直接获取 wildrift 模块的内存范围
-                const ranges = h5gg.getRangesList('wildrift');
+                // 直接获取 UnityFramework 模块的内存范围
+                const ranges = h5gg.getRangesList('UnityFramework');
                 if (ranges && ranges.length > 0) {
                     return ranges[0].start;
                 }
@@ -350,32 +350,36 @@
             }
         }
 
-        // ---------- 4. 核心修改函数（使用新指针链 wildrift + 0xC185C30 -> +0x550 -> +0xB0 -> +0x478 -> +0x18C） ----------
+        // ---------- 4. 核心修改函数（已按最新偏移链更新：UnityFramework+0xDFB51C8+0x17A8+0x1098+0x1898+0x194）----------
         function setCameraDistance(val) {
             if (!memoryBase) {
                 alert("内存基址未就绪，请重试");
                 return false;
             }
             try {
-                // 新指针链: 基址 + 0xC185C30 -> 读指针 -> +0x550 -> 读指针 -> +0xB0 -> 读指针 -> +0x478 -> 读指针 -> +0x18C 写入浮点
-                const baseOffset = 0xC185C30;
-                const firstAddr = Number(memoryBase) + baseOffset;
-                const ptr1 = Number(h5gg.getValue(firstAddr, 'I64'));
-                if (ptr1 === 0) throw new Error("第一级指针无效");
+                let base = Number(memoryBase);
+                // 第一级偏移: +0xDFB51C8
+                let addrLevel1 = base + 0xDFB51C8;
+                let ptr1 = Number(h5gg.getValue(addrLevel1, 'I64'));
+                if (!ptr1) throw new Error("指针链错误: 第1级偏移无效");
                 
-                const secondAddr = ptr1 + 0x550;
-                const ptr2 = Number(h5gg.getValue(secondAddr, 'I64'));
-                if (ptr2 === 0) throw new Error("第二级指针无效");
+                // 第二级偏移: +0x17A8
+                let addrLevel2 = ptr1 + 0x17A8;
+                let ptr2 = Number(h5gg.getValue(addrLevel2, 'I64'));
+                if (!ptr2) throw new Error("指针链错误: 第2级偏移无效");
                 
-                const thirdAddr = ptr2 + 0xB0;
-                const ptr3 = Number(h5gg.getValue(thirdAddr, 'I64'));
-                if (ptr3 === 0) throw new Error("第三级指针无效");
+                // 第三级偏移: +0x1098
+                let addrLevel3 = ptr2 + 0x1098;
+                let ptr3 = Number(h5gg.getValue(addrLevel3, 'I64'));
+                if (!ptr3) throw new Error("指针链错误: 第3级偏移无效");
                 
-                const fourthAddr = ptr3 + 0x478;
-                const ptr4 = Number(h5gg.getValue(fourthAddr, 'I64'));
-                if (ptr4 === 0) throw new Error("第四级指针无效");
+                // 第四级偏移: +0x1898
+                let addrLevel4 = ptr3 + 0x1898;
+                let ptr4 = Number(h5gg.getValue(addrLevel4, 'I64'));
+                if (!ptr4) throw new Error("指针链错误: 第4级偏移无效");
                 
-                const finalAddr = ptr4 + 0x18C;
+                // 最终偏移: +0x194 (视距 float)
+                let finalAddr = ptr4 + 0x194;
                 h5gg.setValue(finalAddr, val, 'F32');
                 return true;
             } catch(e) {
@@ -384,7 +388,7 @@
             }
         }
 
-        // ---------- 5. 按钮逻辑（完全保持原样） ----------
+        // ---------- 5. 按钮逻辑 ----------
         function toggleMenu1() {
             const btn1 = document.getElementById('button1');
             if (!memoryBase) {
